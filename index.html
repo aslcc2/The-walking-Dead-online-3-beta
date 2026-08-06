@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Special Letter For Ary</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #080711;
+            color: #fff;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .ambient-glow {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(255, 77, 109, 0.15) 0%, rgba(0,0,0,0) 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 1;
+            animation: pulseGlow 4s infinite ease-in-out;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
+            50% { transform: translate(-50%, -50%) scale(1.3); opacity: 1; }
+        }
+
+        .main-container {
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 90%;
+            max-width: 380px;
+            transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .title {
+            color: #ff758f;
+            font-size: 1.35rem;
+            margin-bottom: 25px;
+            letter-spacing: 1.5px;
+            font-weight: 500;
+            text-transform: uppercase;
+            opacity: 0.9;
+        }
+
+        .envelope-wrapper {
+            position: relative;
+            width: 270px;
+            height: 175px;
+            background: #ff4d6d;
+            border-radius: 0 0 12px 12px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            cursor: pointer;
+            perspective: 1000px;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .envelope-wrapper:active {
+            transform: scale(0.97);
+        }
+
+        .flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 135px solid transparent;
+            border-right: 135px solid transparent;
+            border-top: 95px solid #ff758f;
+            transform-origin: top;
+            transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), z-index 0.8s;
+            z-index: 5;
+        }
+
+        .pocket {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #ff4d6d;
+            border-radius: 0 0 12px 12px;
+            clip-path: polygon(0 0, 50% 50%, 100% 0, 100% 100%, 0 100%);
+            z-index: 4;
+        }
+
+        .letter {
+            position: absolute;
+            bottom: 8px;
+            left: 13px;
+            width: 244px;
+            height: 220px;
+            background: #ffffff;
+            color: #1a1a1a;
+            border-radius: 10px;
+            padding: 20px 16px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 3;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .letter p {
+            font-size: 0.88rem;
+            line-height: 1.5;
+            color: #333333;
+            font-weight: 500;
+        }
+
+        .flower-icon {
+            position: relative;
+            width: 32px;
+            height: 32px;
+            margin: 8px 0;
+        }
+
+        .petal-ring {
+            width: 100%;
+            height: 100%;
+            border: 2px solid #ff4d6d;
+            border-radius: 50%;
+            position: absolute;
+            animation: ringSpin 8s linear infinite;
+        }
+
+        .flower-core {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #ffb703;
+            border-radius: 50%;
+            top: 11px;
+            left: 11px;
+        }
+
+        @keyframes ringSpin {
+            100% { transform: rotate(360deg); }
+        }
+
+        .envelope-wrapper.open .flap {
+            transform: rotateX(180deg);
+            z-index: 1;
+        }
+
+        .envelope-wrapper.open .letter {
+            transform: translateY(-130px);
+            z-index: 6;
+        }
+
+        .btn-next {
+            background: #111111;
+            color: #ffffff;
+            border: none;
+            padding: 10px 22px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s;
+        }
+
+        .btn-next:active {
+            transform: scale(0.94);
+        }
+
+        .tap-hint {
+            position: absolute;
+            bottom: 30px;
+            font-size: 0.78rem;
+            color: #666666;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        /* PHONK MEME SCREEN */
+        .meme-screen {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #030207;
+            z-index: 100;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .meme-screen.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .phonk-bg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background: radial-gradient(circle, rgba(120, 0, 255, 0.25) 0%, rgba(0, 0, 0, 0.95) 75%);
+            z-index: -1;
+            animation: smoothPulseBg 0.6s infinite alternate ease-in-out;
+        }
+
+        @keyframes smoothPulseBg {
+            0% { opacity: 0.6; transform: scale(1); }
+            100% { opacity: 1; transform: scale(1.05); }
+        }
+
+        .meme-text {
+            font-size: 2.8rem;
+            font-weight: 900;
+            color: #ffffff;
+            letter-spacing: 4px;
+            text-align: center;
+            text-transform: uppercase;
+            text-shadow: 0 0 20px rgba(0, 240, 255, 0.6);
+            animation: textFloat 0.6s infinite alternate ease-in-out;
+        }
+
+        .number-67 {
+            font-size: 8.5rem;
+            color: #ff007f;
+            font-weight: 900;
+            letter-spacing: 2px;
+            text-shadow: 0 0 35px rgba(255, 0, 127, 0.8), 0 0 70px rgba(0, 240, 255, 0.4);
+            animation: numberZoom 0.6s infinite alternate cubic-bezier(0.16, 1, 0.3, 1);
+            margin: 5px 0;
+        }
+
+        .meme-subtext {
+            font-size: 1.1rem;
+            color: #cccccc;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-align: center;
+            opacity: 0.8;
+        }
+
+        @keyframes textFloat {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-8px); }
+        }
+
+        @keyframes numberZoom {
+            0% { transform: scale(0.92); }
+            100% { transform: scale(1.1); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Audio MP3 Direct dari GitHub Raw milikmu -->
+    <audio id="phonkAudio" src="https://raw.githubusercontent.com/aslcc2/The-walking-Dead-online-3-beta/main/ssstik.io_1785994825905%20(1).mp3" preload="auto"></audio>
+
+    <div class="ambient-glow"></div>
+
+    <div class="main-container" id="mainApp">
+        <h2 class="title">For Ary</h2>
+        
+        <div class="envelope-wrapper" id="envelope">
+            <div class="flap"></div>
+            <div class="pocket"></div>
+            
+            <div class="letter">
+                <p>Hey Ary,<br>I have something special to share with you.</p>
+                
+                <div class="flower-icon">
+                    <div class="petal-ring"></div>
+                    <div class="flower-core"></div>
+                </div>
+
+                <button class="btn-next" onclick="triggerMeme(event)">Read More</button>
+            </div>
+        </div>
+
+        <p class="tap-hint" id="hint">Tap envelope to open</p>
+    </div>
+
+    <div class="meme-screen" id="memeScreen">
+        <div class="phonk-bg"></div>
+        <div class="meme-text">Six Seven</div>
+        <div class="number-67">67</div>
+        <div class="meme-subtext">HAHAHAHAHAHA</div>
+    </div>
+
+    <script>
+        const envelope = document.getElementById('envelope');
+        const hint = document.getElementById('hint');
+        
+        envelope.addEventListener('click', function() {
+            if(!envelope.classList.contains('open')) {
+                envelope.classList.add('open');
+                hint.innerText = "Click 'Read More' inside";
+            }
+        });
+
+        function triggerMeme(e) {
+            e.stopPropagation();
+
+            const mainApp = document.getElementById('mainApp');
+            const memeScreen = document.getElementById('memeScreen');
+            const audio = document.getElementById('phonkAudio');
+
+            // Play Lagu Phonk 67 langsung dari GitHub
+            if (audio) {
+                audio.currentTime = 0;
+                audio.play().catch(err => console.log("Gagal muter audio:", err));
+            }
+
+            mainApp.style.opacity = '0';
+            mainApp.style.transform = 'scale(0.95)';
+
+            setTimeout(() => {
+                mainApp.style.display = 'none';
+                memeScreen.classList.add('active');
+
+                if (navigator.vibrate) {
+                    navigator.vibrate([100, 50, 100, 50, 250]);
+                }
+            }, 600);
+        }
+    </script>
+</body>
+</html>
